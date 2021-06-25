@@ -1,4 +1,4 @@
- SQL query to find the top 5 customers in the top 10 cities who have paid the highest total amounts to Rockbuster
+ --SQL query to find the top 5 customers in the top 10 cities who have paid the highest total amounts to Rockbuster
  
  Select DISTINCT A.customer_id, B.first_name, B.last_name, D.city, E.country,
     Sum(A.amount) AS total_amount_paid			
