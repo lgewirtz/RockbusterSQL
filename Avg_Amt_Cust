@@ -1,0 +1,22 @@
+-- Find the average amount paid by the top 5 customers.
+
+SELECT cust_avg.total_amount_paid / COUNT(cust_avg.rental_id) AS avg_paid,
+cust_avg.last_name
+--returns the 5 top customers who paid the most to the company
+FROM
+	(SELECT DISTINCT A.customer_id, B.first_name, B.last_name, 
+		D.city, E.country, Sum(A.amount) AS total_amount_paid,
+	 	A.rental_id
+	FROM payment A
+	INNER JOIN customer B ON A.customer_id = B.customer_id
+	INNER JOIN address C ON B.address_id = C.address_id
+	INNER JOIN city D ON C.city_id = D.city_id
+	INNER JOIN country E on D.country_id = E.country_id
+	WHERE D.city IN ('Aurora', 'Cape Coral', 'Tanza', 'Balikesir', 'Shimonoseki',
+					'Liaocheng', 'Tanauan', 'Bijapur','Memphis', 'Valparai')
+	GROUP BY  D.city, E.country, A.customer_id, B.last_name, B.first_name, A.rental_id
+	ORDER BY Sum(A.amount) DESC
+	LIMIT 5) AS cust_avg
+GROUP BY cust_avg.last_name, cust_avg.total_amount_paid, cust_avg.rental_id
+ORDER BY avg_paid DESC
+--for each of these rows, what is the average amount the customer paid (not the sum)
