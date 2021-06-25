@@ -1,0 +1,23 @@
+--Avg amount paid by top 5 customers using CTE
+
+WITH top_5_avg_paid (total_amount_paidT, rental_id, first_name, last_name) AS
+
+(SELECT DISTINCT Sum(A.amount) AS total_amount_paid, 
+	  A.rental_id, B.first_name, B.last_name	 	
+	FROM payment A
+	INNER JOIN customer B ON A.customer_id = B.customer_id
+	INNER JOIN address C ON B.address_id = C.address_id
+	INNER JOIN city D ON C.city_id = D.city_id
+	INNER JOIN country E on D.country_id = E.country_id
+	WHERE D.city IN ('Aurora', 'Cape Coral', 'Tanza', 'Balikesir', 'Shimonoseki',
+					'Liaocheng', 'Tanauan', 'Bijapur','Memphis', 'Valparai')
+	GROUP BY  B.last_name, B.first_name, A.rental_id
+	ORDER BY Sum(A.amount) DESC
+	LIMIT 5) 
+	--returns the 5 top customers who paid the most to the company
+	
+SELECT DISTINCT total_amount_paidT / COUNT(rental_id) AS avg_paid,
+	first_name, last_name
+FROM top_5_avg_paid
+GROUP BY last_name, total_amount_paidT, rental_id, first_name
+ORDER BY avg_paid DESC
